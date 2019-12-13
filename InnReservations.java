@@ -10,19 +10,25 @@ import java.time.LocalDate;
 
 class InnReservations {
     int codenum = 0;
-    public static void main(String[] args) {
-        try {
+    public static void main(String[] args) 
+    {
+        try 
+        {
             InnReservations ir = new InnReservations();
             ir.askUser();
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) 
+        {
             System.err.println("SQLException: " + e.getMessage());
         }
     }
 
-    private void askUser() throws SQLException {
+    private void askUser() throws SQLException 
+    {
         Scanner sc = new Scanner(System.in);
         String answer = "";
-        while (!answer.toLowerCase().equals("q")) {
+        while (!answer.toLowerCase().equals("q")) 
+        {
             System.out.println("\nChoose Option: \n");
             System.out.println("[G]et Rooms and Rates");
             System.out.println("[F]ind Available Rooms");
@@ -32,23 +38,35 @@ class InnReservations {
             System.out.println("[R]evenue by Month");
             System.out.println("[Q]uit Program\n");
             answer = sc.nextLine();
-            if (answer.toLowerCase().equals("g")) {
+            if (answer.toLowerCase().equals("g")) 
+            {
                 RoomsAndRates();
-            } else if (answer.toLowerCase().equals("f")) {
+            } 
+            else if (answer.toLowerCase().equals("f")) 
+            {
                 Reservations();
-            } else if (answer.toLowerCase().equals("c")) {
+            } 
+            else if (answer.toLowerCase().equals("c")) 
+            {
                 ReservationChange();
-            } else if (answer.toLowerCase().equals("ca")) {
+            } 
+            else if (answer.toLowerCase().equals("ca")) 
+            {
                 ReservationCancellation();
-            } else if (answer.toLowerCase().equals("s")) {
+            } 
+            else if (answer.toLowerCase().equals("s")) 
+            {
                 SearchReservations();
-            } else if (answer.toLowerCase().equals("r")) {
+            } 
+            else if (answer.toLowerCase().equals("r")) 
+            {
                 RevenueByMonth();
             }
         }
     }
 
-    private void RoomsAndRates() throws SQLException {
+    private void RoomsAndRates() throws SQLException 
+    {
         String sql = "SELECT rp.Room, Popularity, NextAvailable, LengthStay, mp.CheckOut  FROM\n" +
                 "(SELECT r.Room, MAX(r.CheckOut),\n" +
                 "ROUND(SUM(DATEDIFF(LEAST(r.CheckOut, CurDate()),\n" +
@@ -91,13 +109,16 @@ class InnReservations {
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
         String pass = System.getenv("HP_JDBC_PW");
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+        try (Connection conn = DriverManager.getConnection(url, user, pass)) 
+        {
             System.out.println("Database connection acquired - processing query");
             try (Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery(sql)) {
+                 ResultSet rs = stmt.executeQuery(sql)) 
+            {
                 System.out.println("RoomCode Popularity NextAvailable LengthStay Checkout");
                 // Step 5: Receive results
-                while (rs.next()) {
+                while (rs.next()) 
+                {
                     String room = rs.getString("Room");
                     float popularity = rs.getFloat("Popularity");
                     Date nextAvailable = rs.getDate("NextAvailable");
@@ -106,15 +127,20 @@ class InnReservations {
                     System.out.format("%s      %.2f       %s    %d          %s%n", room, popularity,
                             nextAvailable, lengthStay, checkout);
                 }
-            } catch (SQLException e) {
+            } 
+            catch (SQLException e) 
+            {
                 System.err.println("SQLException: " + e.getMessage());
             }
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) 
+        {
             System.err.println("SQLException: " + e.getMessage());
         }
     }
 
-    private void Reservations() throws SQLException {
+    private void Reservations() throws SQLException 
+    {
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
         String pass = System.getenv("HP_JDBC_PW");
@@ -153,47 +179,59 @@ class InnReservations {
                 "and rv.checkout > ?\n" +
                 "and rv.checkin < ?\n");
 
-        if (!"any".equalsIgnoreCase(roomCode)) {
+        if (!"any".equalsIgnoreCase(roomCode)) 
+        {
             sb.append(" AND rm.roomcode = ?");
             params.add(roomCode);
         }
-        if (!"any".equalsIgnoreCase(bedType)) {
+        if (!"any".equalsIgnoreCase(bedType)) 
+        {
             sb.append(" AND rm.bedtype = ?");
             params.add(bedType);
         }
 
         sb.append("group by rv.room);\n");
 
-        if (total_staying > 4) {
+        if (total_staying > 4) 
+        {
             System.out.println("There are no rooms for this many people, please try separate reservations");
             return;
         }
 
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+        try (Connection conn = DriverManager.getConnection(url, user, pass)) 
+        {
             System.out.println("Database connection acquired - processing query");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            {
                 int i = 1;
-                for (Object p : params) {
+                for (Object p : params) 
+                {
                     pstmt.setObject(i++, p);
                 }
-                try (ResultSet rs = pstmt.executeQuery()) {
+                try (ResultSet rs = pstmt.executeQuery()) 
+                {
                     System.out.println("Available Rooms:\n");
                     int ind = 0;
                     List<String> rooms = new ArrayList<String>();
-                    while (rs.next()) {
+                    while (rs.next()) 
+                    {
                         ind++;
                         String availableRoom = rs.getString("RoomCode");
                         rooms.add(availableRoom);
                         System.out.format("%d. %s      %n", ind, availableRoom);
                     }
 
-                    if (ind > 0) {
+                    if (ind > 0) 
+                    {
                         System.out.println("Please Select An Above Room to Book by Number (or 0 to cancel): ");
                         int selection = Integer.parseInt(sc.nextLine());
-                        if ((selection > 0) & (selection <= ind)) {
+                        if ((selection > 0) & (selection <= ind)) 
+                        {
                             System.out.println(rooms.get(selection - 1));
                         }
-                    } else {
+                    } 
+                    else 
+                    {
                         List<Object> params2 = new ArrayList<Object>();
 
                         System.out.println("No options available, here are some other options: ");
@@ -206,7 +244,8 @@ class InnReservations {
                                 "join lab7_reservations as rv\n" +
                                 "on rm.roomcode = rv.room\n");
 
-                        if (!"any".equalsIgnoreCase(roomCode)) {
+                        if (!"any".equalsIgnoreCase(roomCode)) 
+                        {
                             sb.append("where rv.room = ?");
                             params2.add(roomCode);
                         }
@@ -219,7 +258,8 @@ class InnReservations {
                                         "join lab7_reservations as rv\n" +
                                         "on rm.roomcode = rv.room\n");
 
-                        if (!"any".equalsIgnoreCase(roomCode)) {
+                        if (!"any".equalsIgnoreCase(roomCode)) 
+                        {
                             sb.append("where rv.room = ?");
                             params2.add(roomCode);
                         }
@@ -232,17 +272,21 @@ class InnReservations {
                                         "and x.checkout > ?\n" +
                                         "limit 5\n" +
                                         ";");
-                        try (PreparedStatement pstmt2 = conn.prepareStatement(sb2.toString())) {
+                        try (PreparedStatement pstmt2 = conn.prepareStatement(sb2.toString())) 
+                        {
                             params2.add(total_staying);
                             params2.add(endDate);
                             int j = 1;
-                            for (Object p : params2) {
+                            for (Object p : params2) 
+                            {
                                 pstmt2.setObject(j++, p);
                             }
                         }
-                        try (ResultSet rs2 = pstmt.executeQuery()) {
+                        try (ResultSet rs2 = pstmt.executeQuery()) 
+                        {
                             int ii = 0;
-                            while (rs.next()) {
+                            while (rs.next()) 
+                            {
                                 ii++;
                                 System.out.println(ii);
                                 System.out.print(rs2);
@@ -254,7 +298,8 @@ class InnReservations {
                         boolean confirm = true;
                         if (confirm == true) {
                             StringBuilder sb3 = new StringBuilder("INSERT INTO lab7_reservations * VALUES (?,?,?,?,?,?,?,?,?");
-                            try (PreparedStatement pstmt3 = conn.prepareStatement(sb3.toString())) {
+                            try (PreparedStatement pstmt3 = conn.prepareStatement(sb3.toString())) 
+                            {
                                 pstmt3.setObject(1, codenum);
                                 codenum++;
                                 pstmt3.setObject(2, roomCode);

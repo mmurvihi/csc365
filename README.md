@@ -6,8 +6,5 @@
 * Matt Mazzagatte
 * Jason Jen
 ## Runtime Instructions:
-* ### shortcut:
-.. * `./run.sh`
- (b) any compilation/runtime instructions, including the names of environment variables used to pass
-JDBC URL, username and password
-(c) information about any known bugs and/or deficiencies.
+### shortcut:
+just run `./run.sh` in the current project directory

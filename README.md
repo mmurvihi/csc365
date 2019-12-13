@@ -9,7 +9,7 @@
 ### shortcut:
 just run `./run.sh` in the current project directory
 ### what actually is going on:
-1. add the jdbc driver jar file to the `CLASSPATH` variable
+1. set the jdbc driver jar file to the `CLASSPATH` variable
 
 		`export CLASSPATH=$CLASSPATH:mysql-connector-java-8.0.16.jar:.`
 
@@ -21,4 +21,14 @@ just run `./run.sh` in the current project directory
 
 		`export HP_JDBC_PW=warthogs77`
 
+3. remove any and all old/irrelevant java class files. we will make new ones
 
+		`rm -rf *.class`
+
+4. compile
+
+		`javac InnReservations.java`
+
+5. run
+
+		`java InnReservations`

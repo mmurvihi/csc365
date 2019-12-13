@@ -33,12 +33,12 @@ just run `./run.sh` in the current project directory
 
 		`java InnReservations`
 
-# Environment Variables
+## Environment Variables
 * `HP_JDBC_URL` for the database server url
 * `HP_JDBC_USER` for the database server username
 * `HP_JDBC_PW` for the database server password
 
-# Database Information
+## Database Information
 * host: `mysql.jj-jj.org`
 * database: `labseven`
 * user: `365lab7`

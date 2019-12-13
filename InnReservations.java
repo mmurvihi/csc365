@@ -8,27 +8,29 @@ import java.sql.PreparedStatement;
 import java.util.*;
 import java.time.LocalDate;
 
-class InnReservations 
+import static java.time.temporal.ChronoUnit.DAYS;
+
+class InnReservations
 {
     int codenum = 0;
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
-        try 
+        try
         {
             InnReservations ir = new InnReservations();
             ir.askUser();
-        } 
-        catch (SQLException e) 
+        }
+        catch (SQLException e)
         {
             System.err.println("SQLException: " + e.getMessage());
         }
     }
 
-    private void askUser() throws SQLException 
+    private void askUser() throws SQLException
     {
         Scanner sc = new Scanner(System.in);
         String answer = "";
-        while (!answer.toLowerCase().equals("q")) 
+        while (!answer.toLowerCase().equals("q"))
         {
             System.out.println("\nChoose Option: \n");
             System.out.println("[G]et Rooms and Rates");
@@ -39,34 +41,34 @@ class InnReservations
             System.out.println("[R]evenue by Month");
             System.out.println("[Q]uit Program\n");
             answer = sc.nextLine();
-            if (answer.toLowerCase().equals("g")) 
+            if (answer.toLowerCase().equals("g"))
             {
                 RoomsAndRates();
-            } 
-            else if (answer.toLowerCase().equals("f")) 
+            }
+            else if (answer.toLowerCase().equals("f"))
             {
                 Reservations();
-            } 
-            else if (answer.toLowerCase().equals("c")) 
+            }
+            else if (answer.toLowerCase().equals("c"))
             {
                 ReservationChange();
-            } 
-            else if (answer.toLowerCase().equals("ca")) 
+            }
+            else if (answer.toLowerCase().equals("ca"))
             {
                 ReservationCancellation();
-            } 
-            else if (answer.toLowerCase().equals("s")) 
+            }
+            else if (answer.toLowerCase().equals("s"))
             {
                 SearchReservations();
-            } 
-            else if (answer.toLowerCase().equals("r")) 
+            }
+            else if (answer.toLowerCase().equals("r"))
             {
                 RevenueByMonth();
             }
         }
     }
 
-    private void RoomsAndRates() throws SQLException 
+    private void RoomsAndRates() throws SQLException
     {
         String sql = "SELECT rp.Room, Popularity, NextAvailable, LengthStay, mp.CheckOut  FROM\n" +
                 "(SELECT r.Room, MAX(r.CheckOut),\n" +
@@ -110,15 +112,15 @@ class InnReservations
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
         String pass = System.getenv("HP_JDBC_PW");
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) 
+        try (Connection conn = DriverManager.getConnection(url, user, pass))
         {
             System.out.println("Database connection acquired - processing query");
             try (Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery(sql)) 
+                 ResultSet rs = stmt.executeQuery(sql))
             {
                 System.out.println("RoomCode Popularity NextAvailable LengthStay Checkout");
                 // Step 5: Receive results
-                while (rs.next()) 
+                while (rs.next())
                 {
                     String room = rs.getString("Room");
                     float popularity = rs.getFloat("Popularity");
@@ -128,19 +130,19 @@ class InnReservations
                     System.out.format("%s      %.2f       %s    %d          %s%n", room, popularity,
                             nextAvailable, lengthStay, checkout);
                 }
-            } 
-            catch (SQLException e) 
+            }
+            catch (SQLException e)
             {
                 System.err.println("SQLException: " + e.getMessage());
             }
-        } 
-        catch (SQLException e) 
+        }
+        catch (SQLException e)
         {
             System.err.println("SQLException: " + e.getMessage());
         }
     }
 
-    private void Reservations() throws SQLException 
+    private void Reservations() throws SQLException
     {
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
@@ -180,12 +182,12 @@ class InnReservations
                 "and rv.checkout > ?\n" +
                 "and rv.checkin < ?\n");
 
-        if (!"any".equalsIgnoreCase(roomCode)) 
+        if (!"any".equalsIgnoreCase(roomCode))
         {
             sb.append(" AND rm.roomcode = ?");
             params.add(roomCode);
         }
-        if (!"any".equalsIgnoreCase(bedType)) 
+        if (!"any".equalsIgnoreCase(bedType))
         {
             sb.append(" AND rm.bedtype = ?");
             params.add(bedType);
@@ -193,28 +195,28 @@ class InnReservations
 
         sb.append("group by rv.room);\n");
 
-        if (total_staying > 4) 
+        if (total_staying > 4)
         {
             System.out.println("There are no rooms for this many people, please try separate reservations");
             return;
         }
 
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) 
+        try (Connection conn = DriverManager.getConnection(url, user, pass))
         {
             System.out.println("Database connection acquired - processing query");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString()))
             {
                 int i = 1;
-                for (Object p : params) 
+                for (Object p : params)
                 {
                     pstmt.setObject(i++, p);
                 }
-                try (ResultSet rs = pstmt.executeQuery()) 
+                try (ResultSet rs = pstmt.executeQuery())
                 {
                     System.out.println("Available Rooms:\n");
                     int ind = 0;
                     List<String> rooms = new ArrayList<String>();
-                    while (rs.next()) 
+                    while (rs.next())
                     {
                         ind++;
                         String availableRoom = rs.getString("RoomCode");
@@ -222,16 +224,16 @@ class InnReservations
                         System.out.format("%d. %s      %n", ind, availableRoom);
                     }
 
-                    if (ind > 0) 
+                    if (ind > 0)
                     {
                         System.out.println("Please Select An Above Room to Book by Number (or 0 to cancel): ");
                         int selection = Integer.parseInt(sc.nextLine());
-                        if ((selection > 0) & (selection <= ind)) 
+                        if ((selection > 0) & (selection <= ind))
                         {
                             System.out.println(rooms.get(selection - 1));
                         }
-                    } 
-                    else 
+                    }
+                    else
                     {
                         List<Object> params2 = new ArrayList<Object>();
 
@@ -245,7 +247,7 @@ class InnReservations
                                 "join lab7_reservations as rv\n" +
                                 "on rm.roomcode = rv.room\n");
 
-                        if (!"any".equalsIgnoreCase(roomCode)) 
+                        if (!"any".equalsIgnoreCase(roomCode))
                         {
                             sb.append("where rv.room = ?");
                             params2.add(roomCode);
@@ -259,7 +261,7 @@ class InnReservations
                                         "join lab7_reservations as rv\n" +
                                         "on rm.roomcode = rv.room\n");
 
-                        if (!"any".equalsIgnoreCase(roomCode)) 
+                        if (!"any".equalsIgnoreCase(roomCode))
                         {
                             sb.append("where rv.room = ?");
                             params2.add(roomCode);
@@ -273,20 +275,20 @@ class InnReservations
                                         "and x.checkout > ?\n" +
                                         "limit 5\n" +
                                         ";");
-                        try (PreparedStatement pstmt2 = conn.prepareStatement(sb2.toString())) 
+                        try (PreparedStatement pstmt2 = conn.prepareStatement(sb2.toString()))
                         {
                             params2.add(total_staying);
                             params2.add(endDate);
                             int j = 1;
-                            for (Object p : params2) 
+                            for (Object p : params2)
                             {
                                 pstmt2.setObject(j++, p);
                             }
                         }
-                        try (ResultSet rs2 = pstmt.executeQuery()) 
+                        try (ResultSet rs2 = pstmt.executeQuery())
                         {
                             int ii = 0;
-                            while (rs.next()) 
+                            while (rs.next())
                             {
                                 ii++;
                                 System.out.println(ii);
@@ -294,12 +296,22 @@ class InnReservations
                             }
                         }
                         //get user input of number
+                        System.out.println("Select an available number");
+                        String num = sc.nextLine();
+
+                        System.out.println(firstName + " " + lastName + " " + roomCode + " " + " " + bedType + " " + beginDate
+                                + " " +  endDate + " " +  numChildren + " " + numAdults + " " +
+                                rs.getInt("BasePrice")*1.18*DAYS.between(LocalDate.parse(beginDate),
+                                        LocalDate.parse(endDate)));
+
+                        System.out.println("Is this correct? (Y)es or (N)o");
+                        String confirm = sc.nextLine();
 
                         //confirm it
-                        boolean confirm = true;
-                        if (confirm == true) {
-                            StringBuilder sb3 = new StringBuilder("INSERT INTO lab7_reservations * VALUES (?,?,?,?,?,?,?,?,?");
-                            try (PreparedStatement pstmt3 = conn.prepareStatement(sb3.toString())) 
+                        //boolean confirm = true;
+                        if (confirm.equals("Y")) {
+                            StringBuilder sb3 = new StringBuilder("INSERT INTO lab7_reservations * VALUES (?,?,?,?,?,?,?,?,?)");
+                            try (PreparedStatement pstmt3 = conn.prepareStatement(sb3.toString()))
                             {
                                 pstmt3.setObject(1, codenum);
                                 codenum++;
@@ -310,14 +322,14 @@ class InnReservations
                 }
             }
         }
-        catch (SQLException e) 
+        catch (SQLException e)
         {
             System.err.println("SQLException: " + e.getMessage());
         }
     }
 
 
-    private void ReservationChange() throws SQLException 
+    private void ReservationChange() throws SQLException
     {
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
@@ -345,7 +357,7 @@ class InnReservations
         updates.add(sc.nextLine());
         System.out.println("What would you like to change Number of Adults to? (Leave Blank if no change)");
         updates.add(sc.nextLine());
-        if (Integer.parseInt(updates.get(4)) + Integer.parseInt(updates.get(5)) > 4) 
+        if (Integer.parseInt(updates.get(4)) + Integer.parseInt(updates.get(5)) > 4)
         {
             System.out.println("Too Many People In Room, Please Try Again");
             return;
@@ -356,9 +368,9 @@ class InnReservations
             Connection conn = DriverManager.getConnection(url, user, pass);
             System.out.println("Database connection acquired - processing query");
             StringBuilder sb = new StringBuilder("UPDATE lab7_reservations SET FirstName = ? WHERE Code = ?");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString()))
             {
-                if (!updates.get(0).equals("")) 
+                if (!updates.get(0).equals(""))
                 {
                     pstmt.setObject(1, updates.get(0));
                     pstmt.setObject(2, resCode);
@@ -366,9 +378,9 @@ class InnReservations
                 }
             }
             sb = new StringBuilder("UPDATE lab7_reservations SET LastName = ? WHERE Code = ?");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString()))
             {
-                if (!updates.get(1).equals("")) 
+                if (!updates.get(1).equals(""))
                 {
                     pstmt.setObject(1, updates.get(1));
                     pstmt.setObject(2, resCode);
@@ -376,9 +388,9 @@ class InnReservations
                 }
             }
             sb = new StringBuilder("UPDATE lab7_reservations SET Checkin = ? WHERE Code = ?");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString()))
             {
-                if (!updates.get(2).equals("")) 
+                if (!updates.get(2).equals(""))
                 {
                     pstmt.setObject(1, updates.get(2));
                     pstmt.setObject(2, resCode);
@@ -386,9 +398,9 @@ class InnReservations
                 }
             }
             sb = new StringBuilder("UPDATE lab7_reservations SET Checkout = ? WHERE Code = ?");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString()))
             {
-                if (!updates.get(3).equals("")) 
+                if (!updates.get(3).equals(""))
                 {
                     pstmt.setObject(1, updates.get(3));
                     pstmt.setObject(2, resCode);
@@ -396,9 +408,9 @@ class InnReservations
                 }
             }
             sb = new StringBuilder("UPDATE lab7_reservations SET Adults = ? WHERE Code = ?");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString()))
             {
-                if (!updates.get(4).equals("")) 
+                if (!updates.get(4).equals(""))
                 {
                     pstmt.setObject(1, updates.get(4));
                     pstmt.setObject(2, resCode);
@@ -406,9 +418,9 @@ class InnReservations
                 }
             }
             sb = new StringBuilder("UPDATE lab7_reservations SET Kids = ? WHERE Code = ?");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString()))
             {
-                if (!updates.get(5).equals("")) 
+                if (!updates.get(5).equals(""))
                 {
                     pstmt.setObject(1, updates.get(5));
                     pstmt.setObject(2, resCode);
@@ -422,7 +434,7 @@ class InnReservations
         }
     }
 
-    private void ReservationCancellation() throws SQLException 
+    private void ReservationCancellation() throws SQLException
     {
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
@@ -432,15 +444,15 @@ class InnReservations
         int resCode = Integer.parseInt(sc.nextLine());
         StringBuilder sb = new StringBuilder("SELECT * FROM lab7_reservations\n" +
                 "where code = ?;");
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) 
+        try (Connection conn = DriverManager.getConnection(url, user, pass))
         {
             System.out.println("Database connection acquired - processing query");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString()))
             {
                 pstmt.setObject(1, resCode);
-                try (ResultSet rs = pstmt.executeQuery()) 
+                try (ResultSet rs = pstmt.executeQuery())
                 {
-                    while (rs.next()) 
+                    while (rs.next())
                     {
                         String code = rs.getString("Code");
                         String room = rs.getString("Room");
@@ -451,10 +463,10 @@ class InnReservations
                         System.out.println("Is this the reservation you would like to cancel? (Y / N)");
                         System.out.format("%s %s %s %s %s %s %n\n", code, room, checkin, checkout, first, last);
                         String resp = sc.nextLine();
-                        if (resp.toLowerCase().equals("y")) 
+                        if (resp.toLowerCase().equals("y"))
                         {
                             String deleteSql = "DELETE from lab7_reservations where code = ?";
-                            try (PreparedStatement delstmt = conn.prepareStatement(deleteSql)) 
+                            try (PreparedStatement delstmt = conn.prepareStatement(deleteSql))
                             {
                                 delstmt.setObject(1, resCode);
                                 int rowCount = delstmt.executeUpdate();
@@ -466,14 +478,14 @@ class InnReservations
                     }
                 }
             }
-        } 
-        catch (SQLException e) 
+        }
+        catch (SQLException e)
         {
             System.err.println("SQLException: " + e.getMessage());
         }
     }
 
-    private void SearchReservations() 
+    private void SearchReservations()
     {
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
@@ -494,72 +506,72 @@ class InnReservations
                 " JOIN lab7_rooms ON lab7_reservations.Room = lab7_rooms.RoomCode" +
                 " WHERE Code IS NOT NULL");
         List<Object> params = new ArrayList<Object>();
-        if (!"".equalsIgnoreCase(first)) 
+        if (!"".equalsIgnoreCase(first))
         {
             if (first.contains("%"))
             {
                 sb.append(" And FirstName LIKE ?");
                 params.add(first);
             }
-            else 
+            else
             {
                 sb.append(" AND FirstName = ?");
                 params.add(first);
             }
         }
-        if (!"".equalsIgnoreCase(roomCode)) 
+        if (!"".equalsIgnoreCase(roomCode))
         {
             if (first.contains("%"))
             {
                 sb.append(" And LastName LIKE ?");
                 params.add(first);
             }
-            else 
+            else
             {
                 sb.append(" AND LastName = ?");
                 params.add(first);
             }
         }
-        if (!"".equalsIgnoreCase(date)) 
+        if (!"".equalsIgnoreCase(date))
         {
             sb.append(" AND Checkin <= ?");
             sb.append(" AND Checkout >= ?");
             params.add(date);
             params.add(date);
         }
-        if (!"".equalsIgnoreCase(roomCode)) 
+        if (!"".equalsIgnoreCase(roomCode))
         {
             if (first.contains("%"))
             {
                 sb.append(" And Room LIKE ?");
                 params.add(first);
             }
-            else 
+            else
             {
                 sb.append(" AND Room = ?");
                 params.add(first);
             }
         }
-        if (!"".equalsIgnoreCase(resCode)) 
+        if (!"".equalsIgnoreCase(resCode))
         {
             sb.append(" AND code = ?");
             params.add(resCode);
         }
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) 
+        try (Connection conn = DriverManager.getConnection(url, user, pass))
         {
             System.out.println("Database connection acquired - processing query");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString()))
             {
                 int i = 1;
-                for (Object p : params) 
+                for (Object p : params)
                 {
                     pstmt.setObject(i++, p);
                 }
                 System.out.println("ReservationCode, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults," +
                         " Kids, Roomname, Beds, BedType, MaxOcc, BasePrice, Decor");
-                try (ResultSet rs = pstmt.executeQuery()) 
+                try (ResultSet rs = pstmt.executeQuery())
                 {
-                    while (rs.next()) 
+                    while (rs.next())
                     {
                         String reserCode = rs.getString("Code");
                         String room = rs.getString("Room");
@@ -582,14 +594,14 @@ class InnReservations
                     }
                 }
             }
-        } 
-        catch (SQLException e) 
+        }
+        catch (SQLException e)
         {
             System.err.println("SQLException: " + e.getMessage());
         }
     }
 
-    private void RevenueByMonth() 
+    private void RevenueByMonth()
     {
         String sql = "select xx.room, January, February, March, April, May, June, July, August, September, October, November, December,\n" +
                 "TotalRev\n" +
@@ -735,15 +747,15 @@ class InnReservations
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
         String pass = System.getenv("HP_JDBC_PW");
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) 
+        try (Connection conn = DriverManager.getConnection(url, user, pass))
         {
             System.out.println("Database connection acquired - processing query");
             try (Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery(sql)) 
-                 {
+                 ResultSet rs = stmt.executeQuery(sql))
+            {
                 System.out.println("Room Jan    Feb     Mar     April   May     June    Jul     Aug     " +
                         "Sep     Oct     Nov     Dec     Total");
-                while (rs.next()) 
+                while (rs.next())
                 {
                     String room = rs.getString("Room");
                     String jan = rs.getString("January");
@@ -764,8 +776,8 @@ class InnReservations
                             jul, aug, sep, oct, nov, dec, tot);
                 }
             }
-        } 
-        catch (SQLException e) 
+        }
+        catch (SQLException e)
         {
             System.err.println("SQLException: " + e.getMessage());
         }

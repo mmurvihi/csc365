@@ -8,7 +8,8 @@ import java.sql.PreparedStatement;
 import java.util.*;
 import java.time.LocalDate;
 
-class InnReservations {
+class InnReservations 
+{
     int codenum = 0;
     public static void main(String[] args) 
     {
@@ -306,16 +307,18 @@ class InnReservations {
                             }
                         }
                     }
-                    }
                 }
             }
-          catch (SQLException e) {
+        }
+        catch (SQLException e) 
+        {
             System.err.println("SQLException: " + e.getMessage());
         }
     }
 
 
-    private void ReservationChange() throws SQLException {
+    private void ReservationChange() throws SQLException 
+    {
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
         String pass = System.getenv("HP_JDBC_PW");
@@ -342,62 +345,76 @@ class InnReservations {
         updates.add(sc.nextLine());
         System.out.println("What would you like to change Number of Adults to? (Leave Blank if no change)");
         updates.add(sc.nextLine());
-        if (Integer.parseInt(updates.get(4)) + Integer.parseInt(updates.get(5)) > 4) {
+        if (Integer.parseInt(updates.get(4)) + Integer.parseInt(updates.get(5)) > 4) 
+        {
             System.out.println("Too Many People In Room, Please Try Again");
             return;
         }
-        try{
+        try
+        {
             Class.forName("com.mysql.jdbc.Driver");
             Connection conn = DriverManager.getConnection(url, user, pass);
             System.out.println("Database connection acquired - processing query");
-                StringBuilder sb = new StringBuilder("UPDATE lab7_reservations SET FirstName = ? WHERE Code = ?");
-                try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) {
-                    if (!updates.get(0).equals("")) {
-                        pstmt.setObject(1, updates.get(0));
-                        pstmt.setObject(2, resCode);
-                        pstmt.executeUpdate();
-                    }
+            StringBuilder sb = new StringBuilder("UPDATE lab7_reservations SET FirstName = ? WHERE Code = ?");
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            {
+                if (!updates.get(0).equals("")) 
+                {
+                    pstmt.setObject(1, updates.get(0));
+                    pstmt.setObject(2, resCode);
+                    pstmt.executeUpdate();
                 }
-                sb = new StringBuilder("UPDATE lab7_reservations SET LastName = ? WHERE Code = ?");
-                try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) {
-                    if (!updates.get(1).equals("")) {
-                        pstmt.setObject(1, updates.get(1));
-                        pstmt.setObject(2, resCode);
-                        pstmt.executeUpdate();
-                    }
+            }
+            sb = new StringBuilder("UPDATE lab7_reservations SET LastName = ? WHERE Code = ?");
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            {
+                if (!updates.get(1).equals("")) 
+                {
+                    pstmt.setObject(1, updates.get(1));
+                    pstmt.setObject(2, resCode);
+                    pstmt.executeUpdate();
                 }
-                sb = new StringBuilder("UPDATE lab7_reservations SET Checkin = ? WHERE Code = ?");
-                try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) {
-                    if (!updates.get(2).equals("")) {
-                        pstmt.setObject(1, updates.get(2));
-                        pstmt.setObject(2, resCode);
-                        pstmt.executeUpdate();
-                    }
+            }
+            sb = new StringBuilder("UPDATE lab7_reservations SET Checkin = ? WHERE Code = ?");
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            {
+                if (!updates.get(2).equals("")) 
+                {
+                    pstmt.setObject(1, updates.get(2));
+                    pstmt.setObject(2, resCode);
+                    pstmt.executeUpdate();
                 }
-                sb = new StringBuilder("UPDATE lab7_reservations SET Checkout = ? WHERE Code = ?");
-                try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) {
-                    if (!updates.get(3).equals("")) {
-                        pstmt.setObject(1, updates.get(3));
-                        pstmt.setObject(2, resCode);
-                        pstmt.executeUpdate();
-                    }
+            }
+            sb = new StringBuilder("UPDATE lab7_reservations SET Checkout = ? WHERE Code = ?");
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            {
+                if (!updates.get(3).equals("")) 
+                {
+                    pstmt.setObject(1, updates.get(3));
+                    pstmt.setObject(2, resCode);
+                    pstmt.executeUpdate();
                 }
-                sb = new StringBuilder("UPDATE lab7_reservations SET Adults = ? WHERE Code = ?");
-                try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) {
-                    if (!updates.get(4).equals("")) {
-                        pstmt.setObject(1, updates.get(4));
-                        pstmt.setObject(2, resCode);
-                        pstmt.executeUpdate();
-                    }
+            }
+            sb = new StringBuilder("UPDATE lab7_reservations SET Adults = ? WHERE Code = ?");
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            {
+                if (!updates.get(4).equals("")) 
+                {
+                    pstmt.setObject(1, updates.get(4));
+                    pstmt.setObject(2, resCode);
+                    pstmt.executeUpdate();
                 }
-                sb = new StringBuilder("UPDATE lab7_reservations SET Kids = ? WHERE Code = ?");
-                try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) {
-                    if (!updates.get(5).equals("")) {
-                        pstmt.setObject(1, updates.get(5));
-                        pstmt.setObject(2, resCode);
-                        pstmt.executeUpdate();
-                    }
+            }
+            sb = new StringBuilder("UPDATE lab7_reservations SET Kids = ? WHERE Code = ?");
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            {
+                if (!updates.get(5).equals("")) 
+                {
+                    pstmt.setObject(1, updates.get(5));
+                    pstmt.setObject(2, resCode);
+                    pstmt.executeUpdate();
                 }
+            }
         }
         catch(Exception e)
         {
@@ -405,7 +422,8 @@ class InnReservations {
         }
     }
 
-    private void ReservationCancellation() throws SQLException {
+    private void ReservationCancellation() throws SQLException 
+    {
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
         String pass = System.getenv("HP_JDBC_PW");
@@ -414,12 +432,16 @@ class InnReservations {
         int resCode = Integer.parseInt(sc.nextLine());
         StringBuilder sb = new StringBuilder("SELECT * FROM lab7_reservations\n" +
                 "where code = ?;");
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+        try (Connection conn = DriverManager.getConnection(url, user, pass)) 
+        {
             System.out.println("Database connection acquired - processing query");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            {
                 pstmt.setObject(1, resCode);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    while (rs.next()) {
+                try (ResultSet rs = pstmt.executeQuery()) 
+                {
+                    while (rs.next()) 
+                    {
                         String code = rs.getString("Code");
                         String room = rs.getString("Room");
                         String checkin = rs.getString("Checkin");
@@ -429,9 +451,11 @@ class InnReservations {
                         System.out.println("Is this the reservation you would like to cancel? (Y / N)");
                         System.out.format("%s %s %s %s %s %s %n\n", code, room, checkin, checkout, first, last);
                         String resp = sc.nextLine();
-                        if (resp.toLowerCase().equals("y")) {
+                        if (resp.toLowerCase().equals("y")) 
+                        {
                             String deleteSql = "DELETE from lab7_reservations where code = ?";
-                            try (PreparedStatement delstmt = conn.prepareStatement(deleteSql)) {
+                            try (PreparedStatement delstmt = conn.prepareStatement(deleteSql)) 
+                            {
                                 delstmt.setObject(1, resCode);
                                 int rowCount = delstmt.executeUpdate();
                                 if (rowCount == 1) {
@@ -440,15 +464,17 @@ class InnReservations {
                             }
                         }
                     }
-
                 }
             }
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) 
+        {
             System.err.println("SQLException: " + e.getMessage());
         }
     }
 
-    private void SearchReservations() {
+    private void SearchReservations() 
+    {
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
         String pass = System.getenv("HP_JDBC_PW");
@@ -468,57 +494,73 @@ class InnReservations {
                 " JOIN lab7_rooms ON lab7_reservations.Room = lab7_rooms.RoomCode" +
                 " WHERE Code IS NOT NULL");
         List<Object> params = new ArrayList<Object>();
-        if (!"".equalsIgnoreCase(first)) {
-            if (first.contains("%")){
+        if (!"".equalsIgnoreCase(first)) 
+        {
+            if (first.contains("%"))
+            {
                 sb.append(" And FirstName LIKE ?");
                 params.add(first);
             }
-            else {
+            else 
+            {
                 sb.append(" AND FirstName = ?");
                 params.add(first);
             }
         }
-        if (!"".equalsIgnoreCase(roomCode)) {
-            if (first.contains("%")){
+        if (!"".equalsIgnoreCase(roomCode)) 
+        {
+            if (first.contains("%"))
+            {
                 sb.append(" And LastName LIKE ?");
                 params.add(first);
             }
-            else {
+            else 
+            {
                 sb.append(" AND LastName = ?");
                 params.add(first);
             }
         }
-        if (!"".equalsIgnoreCase(date)) {
+        if (!"".equalsIgnoreCase(date)) 
+        {
             sb.append(" AND Checkin <= ?");
             sb.append(" AND Checkout >= ?");
             params.add(date);
             params.add(date);
         }
-        if (!"".equalsIgnoreCase(roomCode)) {
-            if (first.contains("%")){
+        if (!"".equalsIgnoreCase(roomCode)) 
+        {
+            if (first.contains("%"))
+            {
                 sb.append(" And Room LIKE ?");
                 params.add(first);
             }
-            else {
+            else 
+            {
                 sb.append(" AND Room = ?");
                 params.add(first);
             }
         }
-        if (!"".equalsIgnoreCase(resCode)) {
+        if (!"".equalsIgnoreCase(resCode)) 
+        {
             sb.append(" AND code = ?");
             params.add(resCode);
         }
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+        try (Connection conn = DriverManager.getConnection(url, user, pass)) 
+        {
             System.out.println("Database connection acquired - processing query");
-            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sb.toString())) 
+            {
                 int i = 1;
-                for (Object p : params) {
+                for (Object p : params) 
+                {
                     pstmt.setObject(i++, p);
                 }
                 System.out.println("ReservationCode, Room, CheckIn, Checkout, Rate, LastName, FirstName, Adults," +
                         " Kids, Roomname, Beds, BedType, MaxOcc, BasePrice, Decor");
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    while (rs.next()) {
+                try (ResultSet rs = pstmt.executeQuery()) 
+                {
+                    while (rs.next()) 
+                    {
                         String reserCode = rs.getString("Code");
                         String room = rs.getString("Room");
                         String checkin = rs.getString("CheckIn");
@@ -540,13 +582,15 @@ class InnReservations {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) 
+        {
             System.err.println("SQLException: " + e.getMessage());
         }
-
     }
 
-    private void RevenueByMonth() {
+    private void RevenueByMonth() 
+    {
         String sql = "select xx.room, January, February, March, April, May, June, July, August, September, October, November, December,\n" +
                 "TotalRev\n" +
                 "from\n" +
@@ -691,13 +735,16 @@ class InnReservations {
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
         String pass = System.getenv("HP_JDBC_PW");
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+        try (Connection conn = DriverManager.getConnection(url, user, pass)) 
+        {
             System.out.println("Database connection acquired - processing query");
             try (Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery(sql)) {
+                 ResultSet rs = stmt.executeQuery(sql)) 
+                 {
                 System.out.println("Room Jan    Feb     Mar     April   May     June    Jul     Aug     " +
                         "Sep     Oct     Nov     Dec     Total");
-                while (rs.next()) {
+                while (rs.next()) 
+                {
                     String room = rs.getString("Room");
                     String jan = rs.getString("January");
                     String feb = rs.getString("february");
@@ -717,17 +764,10 @@ class InnReservations {
                             jul, aug, sep, oct, nov, dec, tot);
                 }
             }
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) 
+        {
             System.err.println("SQLException: " + e.getMessage());
         }
-
     }
-
 }
-
-
-//
-//export CLASSPATH=$CLASSPATH:mysql-connector-java-8.0.16.jar:.
-  //      export HP_JDBC_URL=jdbc:mysql://db.labthreesixfive.com/echris06?autoReconnect=true\&useSSL=false
-    //    export HP_JDBC_USER=
-      //  export HP_JDBC_PW=CSC365-F2019_01424998

@@ -1,10 +1,10 @@
-# csc365
+# lab 7
 ## Members:
-*Erik Christensen
-*Jack Langston
-*Margot Murvihill
-*Matt Mazzagatte
-*Jason Jen
+* Erik Christensen
+* Jack Langston
+* Margot Murvihill
+* Matt Mazzagatte
+* Jason Jen
 ## Runtime Instructions:
  (b) any compilation/runtime instructions, including the names of environment variables used to pass
 JDBC URL, username and password

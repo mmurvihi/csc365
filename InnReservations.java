@@ -88,12 +88,6 @@ class InnReservations {
                 "ON rp.Room = mp.Room\n" +
                 " \n" +
                 "ORDER BY Popularity DESC;";
-        /*String url = "jdbc:mysql://mysql.jj-jj.org/labseven";
-        //String url = "jdbc:mysql://db.labthreesixfive.com/echris06?autoReconnect=true&useSSL=false";
-        String user = "365lab7";
-        //String user = "echris06";
-        String pass = "warthogs77";
-        //String pass = "CSC365-F2019_01424998";*/
         String url = System.getenv("HP_JDBC_URL");
         String user = System.getenv("HP_JDBC_USER");
         String pass = System.getenv("HP_JDBC_PW");

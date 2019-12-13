@@ -6,9 +6,9 @@
 * Matt Mazzagatte
 * Jason Jen
 ## Runtime Instructions:
-### shortcut:
+### shortcut
 just run `./run.sh` in the current project directory
-### what actually is going on:
+### what is actually going on
 1. set the jdbc driver jar file to the `CLASSPATH` variable
 
 		`export CLASSPATH=$CLASSPATH:mysql-connector-java-8.0.16.jar:.`
@@ -32,3 +32,14 @@ just run `./run.sh` in the current project directory
 5. run
 
 		`java InnReservations`
+
+# Environment Variables
+* `HP_JDBC_URL` for the database server url
+* `HP_JDBC_USER` for the database server username
+* `HP_JDBC_PW` for the database server password
+
+# Database Information
+* host: `mysql.jj-jj.org`
+* database: `labseven`
+* user: `365lab7`
+* password: `warthogs77`

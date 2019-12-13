@@ -43,3 +43,6 @@ just run `./run.sh` in the current project directory
 * database: `labseven`
 * user: `365lab7`
 * password: `warthogs77`
+
+## known issues
+n/a

@@ -170,7 +170,7 @@ class InnReservations
         params.add(total_staying);
         params.add(beginDate);
         params.add(endDate);
-        StringBuilder sb = new StringBuilder("select rm.roomcode AS RoomCode\n" +
+        StringBuilder sb = new StringBuilder("select rm.roomcode AS RoomCode, rm.bedType, rm.basePrice AS BasePrice\n" +
                 "from lab7_rooms as rm\n" +
                 "where rm.maxocc >= ?\n" +
                 "and rm.roomcode not in (\n" +
@@ -216,22 +216,28 @@ class InnReservations
                     System.out.println("Available Rooms:\n");
                     int ind = 0;
                     List<String> rooms = new ArrayList<String>();
+                    List<String> beds = new ArrayList<String>();
+                    List<Integer> prices = new ArrayList<Integer>();
                     while (rs.next())
                     {
                         ind++;
                         String availableRoom = rs.getString("RoomCode");
+                        String bedtypes = rs.getString("bedType");
+                        Integer baseprices = rs.getInt("BasePrice");
                         rooms.add(availableRoom);
+                        beds.add(bedtypes);
+                        prices.add(baseprices);
                         System.out.format("%d. %s      %n", ind, availableRoom);
                     }
 
                     if (ind > 0)
                     {
-                        System.out.println("Please Select An Above Room to Book by Number (or 0 to cancel): ");
-                        int selection = Integer.parseInt(sc.nextLine());
-                        if ((selection > 0) & (selection <= ind))
-                        {
-                            System.out.println(rooms.get(selection - 1));
-                        }
+//                        System.out.println("Please Select An Above Room to Book by Number (or 0 to cancel): ");
+//                        int selection = Integer.parseInt(sc.nextLine());
+//                        if ((selection > 0) & (selection <= ind))
+//                        {
+//                            System.out.println(rooms.get(selection - 1));
+//                        }
                     }
                     else
                     {
@@ -239,9 +245,9 @@ class InnReservations
 
                         System.out.println("No options available, here are some other options: ");
                         StringBuilder sb2 = new StringBuilder("select x.room as RoomToStayIn, x.checkout as DayYouCanCheckin,\n" +
-                                "y.checkin as DayYouCanCheckout\n" +
+                                "y.checkin as DayYouCanCheckout, x.basePrice as BasePrice, x.bedType as BedType\n" +
                                 "from\n" +
-                                "(select rm.maxocc, rv.room, rv.checkin, rv.checkout,\n" +
+                                "(select rm.basePrice, rm.bedType, rm.maxOcc, rv.room, rv.checkin, rv.checkout,\n" +
                                 "rank() over (partition by rv.room order by rv.checkin) as DayRank\n" +
                                 "from lab7_rooms as rm\n" +
                                 "join lab7_reservations as rv\n" +
@@ -294,30 +300,58 @@ class InnReservations
                                 System.out.println(ii);
                                 System.out.print(rs2);
                             }
+
                         }
                         //get user input of number
-                        System.out.println("Select an available number");
-                        String num = sc.nextLine();
+                        //System.out.println("Select an available number");
+                        //String num = sc.nextLine();
 
-                        System.out.println(firstName + " " + lastName + " " + roomCode + " " + " " + bedType + " " + beginDate
-                                + " " +  endDate + " " +  numChildren + " " + numAdults + " " +
-                                rs.getInt("BasePrice")*1.18*DAYS.between(LocalDate.parse(beginDate),
-                                        LocalDate.parse(endDate)));
 
-                        System.out.println("Is this correct? (Y)es or (N)o");
-                        String confirm = sc.nextLine();
 
-                        //confirm it
-                        //boolean confirm = true;
-                        if (confirm.equals("Y")) {
-                            StringBuilder sb3 = new StringBuilder("INSERT INTO lab7_reservations * VALUES (?,?,?,?,?,?,?,?,?)");
-                            try (PreparedStatement pstmt3 = conn.prepareStatement(sb3.toString()))
-                            {
-                                pstmt3.setObject(1, codenum);
-                                codenum++;
-                                pstmt3.setObject(2, roomCode);
+                    }
+                    System.out.println("Please Select An Above Room to Book by Number (or 0 to cancel): ");
+                    int selection = Integer.parseInt(sc.nextLine());
+                    if ((selection > 0) & (selection <= 5))
+                    {
+                        System.out.println(rooms.get(selection - 1));
+                    }
+                    System.out.println(firstName + " " + lastName + " " + rooms.get(selection-1) + " " + beds.get(selection-1)
+                            + " " + beginDate
+                            + " " +  endDate + " " +  numChildren + " " + numAdults + " " +
+                            prices.get(selection -1)*1.18*DAYS.between(LocalDate.parse(beginDate),
+                                    LocalDate.parse(endDate)));
+
+                    System.out.println("Is this correct? (Y)es or (N)o");
+                    String confirm = sc.nextLine();
+
+                    //confirm it
+                    //boolean confirm = true;
+                    if (confirm.equals("Y")) {
+                        StringBuilder sb3 = new StringBuilder("INSERT INTO lab7_reservations " +
+                                "(CODE, Room, CheckIn, CheckOut, Rate, LastName, FirstName, Adults, Kids) " +
+                                "VALUES (?,?,?,?,?,?,?,?,?)");
+                        try (PreparedStatement pstmt3 = conn.prepareStatement(sb3.toString()))
+                        {
+                            pstmt3.setObject(1, codenum);
+                            codenum++;
+                            pstmt3.setObject(2, rooms.get(selection-1));
+                            pstmt3.setObject(3, beginDate);
+                            pstmt3.setObject(4, endDate);
+                            pstmt3.setObject(5, prices.get(selection -1)*1.18*DAYS.between(LocalDate.parse(beginDate),
+                                    LocalDate.parse(endDate)));
+                            pstmt3.setObject(6, lastName);
+                            pstmt3.setObject(7, firstName);
+                            pstmt3.setObject(8, numAdults);
+                            pstmt3.setObject(9, numChildren);
+                            try{
+                                pstmt3.executeUpdate();
+                                System.out.print("Reservation saved");
+                            }
+                            catch(Exception e ){
+                                System.out.print("Failed to insert" + e);
                             }
                         }
+
                     }
                 }
             }

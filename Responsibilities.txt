@@ -1,0 +1,28 @@
+Here is description of everyone's contribution
+
+Started: 12-1-2019
+Ended: 12-13-2019
+
+Erik Christensen:
+Honestly did all the leg work to figure out how to set up connections
+then implement the SQL queries into the Java code.
+He pretty much made sure all the non-functional requirements were good
+and did all of FR3, FR4, FR5 - both the queries and java code.
+
+Jack Langston:
+Jack did the hardest SQL queries as he did both FR2, and FR6. He made
+sure they would output the right results and helped write the java code for FR2.
+
+Matthew Mazzagatte:
+Created the query for FR1 and wrote most of the java code for FR1.
+Helped implement and debug the java code for FR2, and wrote up this report.
+
+Jason:
+Helped establish connection to the database, wrote shell script to run files, wrote up the readme.
+Helped write SQL to prevent conflict between queries
+
+Margot:
+Helped finalize the java code for FR2 and make sure the data was formatted correctly.
+Helped format confirmation and insert statements for updating tables.
+
+
